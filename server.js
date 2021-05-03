@@ -203,15 +203,7 @@ router.post('/getWeekWiseData', function(req, res) {
         if (err) res.send(err);
         // return that user
         let totals = [{
-            label:"2021-04-01"
-        },{
-            label:"2021-04-02"
-        },{
-            label:"2021-04-03"
-        },{
-            label:"2021-04-04"
-        },{
-            label:"2021-04-05"
+            label:new Date().toISOString().split("T")[0]
         }]
         let finalData = []
         if(user['totals'] && Array.isArray(user['totals']) && user['totals'].length > 0){
@@ -256,14 +248,14 @@ router.post('/getWeekWiseData', function(req, res) {
 function getTotals(arrayData){
     let returnArr = []
     if(arrayData && Array.isArray(arrayData) && arrayData.length > 0){
-        let calTotal = arrayData.filter(x=>x['cal']).map(x=>x && x['cal']).filter(Boolean).map(x=>x && x.replace(/[^\d.-]/g, '')).map(x=>Number(x)).reduce((a, b) => a + b, 0)
-        let carbTotal = arrayData.filter(x=>x['carb']).map(x=>x && x['carb']).filter(Boolean).map(x=>x && x.replace(/[^\d.-]/g, '')).map(x=>Number(x)).reduce((a, b) => a + b, 0)
-        let protTotal = arrayData.filter(x=>x['prot']).map(x=>x && x['prot']).filter(Boolean).map(x=>x && x.replace(/[^\d.-]/g, '')).map(x=>Number(x)).reduce((a, b) => a + b, 0)
-        let fatTotal = arrayData.filter(x=>x['fat']).map(x=>x && x['fat']).filter(Boolean).map(x=>x && x.replace(/[^\d.-]/g, '')).map(x=>Number(x)).reduce((a, b) => a + b, 0)
-        let sodTotal = arrayData.filter(x=>x['sod']).map(x=>x && x['sod']).filter(Boolean).map(x=>x && x.replace(/[^\d.-]/g, '')).map(x=>Number(x)).reduce((a, b) => a + b, 0)
-        let fibrTotal = arrayData.filter(x=>x['fibr']).map(x=>x && x['fibr']).filter(Boolean).map(x=>x && x.replace(/[^\d.-]/g, '')).map(x=>Number(x)).reduce((a, b) => a + b, 0)
-        let sugrTotal = arrayData.filter(x=>x['sugr']).map(x=>x && x['sugr']).filter(Boolean).map(x=>x && x.replace(/[^\d.-]/g, '')).map(x=>Number(x)).reduce((a, b) => a + b, 0)
-        let vitaTotal = arrayData.filter(x=>x['vita']).map(x=>x && x['vita']).filter(Boolean).map(x=>x && x.replace(/[^\d.-]/g, '')).map(x=>Number(x)).reduce((a, b) => a + b, 0)
+        let calTotal = arrayData.filter(x=>x['cal']).map(x=>Number(x['cal'].replace(/[^\d.-]/g, ''))*Number(x['serving'])).filter(Boolean).map(x=>Number(x)).reduce((a, b) => a + b, 0)
+        let carbTotal = arrayData.filter(x=>x['carb']).map(x=>Number(x['carb'].replace(/[^\d.-]/g, ''))*Number(x['serving'])).filter(Boolean).map(x=>Number(x)).reduce((a, b) => a + b, 0)
+        let protTotal = arrayData.filter(x=>x['prot']).map(x=>Number(x['prot'].replace(/[^\d.-]/g, ''))*Number(x['serving'])).filter(Boolean).map(x=>Number(x)).reduce((a, b) => a + b, 0)
+        let fatTotal = arrayData.filter(x=>x['fat']).map(x=>Number(x['fat'].replace(/[^\d.-]/g, ''))*Number(x['serving'])).filter(Boolean).map(x=>Number(x)).reduce((a, b) => a + b, 0)
+        let sodTotal = arrayData.filter(x=>x['sod']).map(x=>Number(x['sod'].replace(/[^\d.-]/g, ''))*Number(x['serving'])).filter(Boolean).map(x=>Number(x)).reduce((a, b) => a + b, 0)
+        let fibrTotal = arrayData.filter(x=>x['fibr']).map(x=>Number(x['fibr'].replace(/[^\d.-]/g, ''))*Number(x['serving'])).filter(Boolean).map(x=>Number(x)).reduce((a, b) => a + b, 0)
+        let sugrTotal = arrayData.filter(x=>x['sugr']).map(x=>Number(x['sugr'].replace(/[^\d.-]/g, ''))*Number(x['serving'])).filter(Boolean).map(x=>Number(x)).reduce((a, b) => a + b, 0)
+        // let vitaTotal = arrayData.filter(x=>x['vita']).map(x=>Number(x['vita'].replace(/[^\d.-]/g, ''))*Number(x['serving'])).filter(Boolean).map(x=>Number(x)).reduce((a, b) => a + b, 0)
         returnArr.push({
             label:"Calorie",
             quantity:calTotal,
@@ -299,11 +291,11 @@ function getTotals(arrayData){
             quantity:sugrTotal,
             extValue:"g"
         })
-        returnArr.push({
-            label:"Vitamin",
-            quantity:vitaTotal,
-            extValue:"g"
-        })
+        // returnArr.push({
+        //     label:"Vitamin",
+        //     quantity:vitaTotal,
+        //     extValue:"g"
+        // })
         returnArr = returnArr.filter(x=>x['quantity'])
     }
     return returnArr
